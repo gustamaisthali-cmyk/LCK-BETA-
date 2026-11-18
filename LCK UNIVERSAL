@@ -1,5 +1,5 @@
 -- =====================================================================
--- SUS HUB | v.11.2 — LCK SCRIPT (Versão Limpa, sem emojis e strings corrigidas)
+-- SUS HUB | v.11.2 - LCK SCRIPT (Versao Limpa Sem Acentos)
 -- =====================================================================
 
 local API_CONFIG = {
@@ -25,7 +25,6 @@ local Lighting          = game:GetService("Lighting")
 
 local LocalPlayer = Players.LocalPlayer
 
--- Puxar a foto real do jogador
 local PlayerAvatarUrl = "rbxassetid://7072718330"
 pcall(function()
     PlayerAvatarUrl = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
@@ -193,7 +192,7 @@ local function stackTexturesOnCharacter(id1, id2)
 end
 
 -- =====================================================================
--- LANÇAMENTO DO HUB PRINCIPAL
+-- LANCAMENTO DO HUB PRINCIPAL
 -- =====================================================================
 local function LaunchSUSHub(isPremium)
     local COLORS = {
@@ -230,7 +229,7 @@ local function LaunchSUSHub(isPremium)
         if info and info.Name then gameName = info.Name end
     end)
 
-    local statusTitleText = isPremium and " • [PREMIUM]" or " • [FREE]"
+    local statusTitleText = isPremium and " - [PREMIUM]" or " - [FREE]"
     local titleLbl = Instance.new("TextLabel")
     titleLbl.Size = UDim2.new(1, -220, 1, 0)
     titleLbl.Position = UDim2.fromOffset(12, 0)
@@ -262,7 +261,6 @@ local function LaunchSUSHub(isPremium)
     closeBtn.MouseButton1Click:Connect(function() main.Visible = false openBtn.Visible = true end)
     openBtn.MouseButton1Click:Connect(function() main.Visible = true openBtn.Visible = false end)
 
-    -- Arrastar
     do
         local dragging, dragStart, startPos
         titleBar.InputBegan:Connect(function(i)
@@ -281,7 +279,6 @@ local function LaunchSUSHub(isPremium)
         end)
     end
 
-    -- ABAS
     local TabBar = Instance.new("Frame", main)
     TabBar.Size = UDim2.new(1, -20, 0, 32)
     TabBar.Position = UDim2.fromOffset(10, 48)
@@ -311,9 +308,7 @@ local function LaunchSUSHub(isPremium)
     ContentArea.Position = UDim2.fromOffset(10, 82)
     ContentArea.BackgroundTransparency = 1
 
-    -- ==========================================
-    -- ABA MAIN
-    -- ==========================================
+    -- MAIN
     local MainFrame = Instance.new("Frame", ContentArea)
     MainFrame.Size = UDim2.fromScale(1, 1)
     MainFrame.BackgroundTransparency = 1
@@ -364,7 +359,7 @@ local function LaunchSUSHub(isPremium)
         local tLbl = Instance.new("TextLabel", btn)
         tLbl.Size, tLbl.Position = UDim2.new(1, -12, 0, 20), UDim2.fromOffset(8, 4)
         tLbl.BackgroundTransparency = 1
-        tLbl.Text, tLbl.TextColor3 = "★ " .. title, COLORS.text
+        tLbl.Text, tLbl.TextColor3 = "* " .. title, COLORS.text
         tLbl.Font, tLbl.TextSize = Enum.Font.GothamBold, 11
         tLbl.TextXAlignment = Enum.TextXAlignment.Left
         local dLbl = Instance.new("TextLabel", btn)
@@ -380,9 +375,7 @@ local function LaunchSUSHub(isPremium)
     makeShortcutRow("YouTube", "Copiar canal @LCK_SCRIPT", 86, function() pcall(function() setclipboard(API_CONFIG.YOUTUBE_URL) end) Notify("Copiado", "YouTube copiado!") end)
     makeShortcutRow("Instagram", "Copiar Instagram oficial", 138, function() pcall(function() setclipboard(API_CONFIG.INSTAGRAM_URL) end) Notify("Copiado", "Instagram copiado!") end)
 
-    -- ==========================================
-    -- ABA INFO
-    -- ==========================================
+    -- INFO
     local InfoFrame = Instance.new("Frame", ContentArea)
     InfoFrame.Size, InfoFrame.BackgroundTransparency = UDim2.fromScale(1, 1), 1
     InfoFrame.Visible = false
@@ -410,7 +403,7 @@ local function LaunchSUSHub(isPremium)
         local tLbl = Instance.new("TextLabel", btn)
         tLbl.Size, tLbl.Position = UDim2.new(1, -12, 0, 20), UDim2.fromOffset(10, 4)
         tLbl.BackgroundTransparency = 1
-        tLbl.Text, tLbl.TextColor3 = ">> " .. title, COLORS.accent
+        tLbl.Text, tLbl.TextColor3 = "> " .. title, COLORS.accent
         tLbl.Font, tLbl.TextSize = Enum.Font.GothamBold, 11
         tLbl.TextXAlignment = Enum.TextXAlignment.Left
         local dLbl = Instance.new("TextLabel", btn)
@@ -431,9 +424,7 @@ local function LaunchSUSHub(isPremium)
         pcall(function() loadstring(game:HttpGet("https://pastefy.app/SglyCstp/raw"))() end)
     end)
 
-    -- ==========================================
-    -- ABA TEXTURAS
-    -- ==========================================
+    -- TEXTURAS
     local TexturaFrame = Instance.new("Frame", ContentArea)
     TexturaFrame.Size, TexturaFrame.BackgroundTransparency = UDim2.fromScale(1, 1), 1
     TexturaFrame.Visible = false
@@ -480,9 +471,7 @@ local function LaunchSUSHub(isPremium)
         stackTexturesOnCharacter("rbxassetid://7546651802", "rbxassetid://7547167347")
     end)
 
-    -- ==========================================
-    -- ABA JOGADOR
-    -- ==========================================
+    -- JOGADOR
     local PlayerFrame = Instance.new("Frame", ContentArea)
     PlayerFrame.Size, PlayerFrame.BackgroundTransparency = UDim2.fromScale(1, 1), 1
     PlayerFrame.Visible = false
@@ -493,7 +482,6 @@ local function LaunchSUSHub(isPremium)
     Instance.new("UICorner", PlayerPanel).CornerRadius = UDim.new(0, 8)
     Instance.new("UIStroke", PlayerPanel).Color = COLORS.accent
 
-    -- Funções do Jogador
     local noclip = false
     local infJump = false
     local flying = false
@@ -692,7 +680,6 @@ local function LaunchSUSHub(isPremium)
         Notify("Graficos", "Iluminacao melhorada!", 2)
     end)
 
-    -- SISTEMA DE TROCA DE ABAS
     local function setActiveTab(activeBtn, targetFrame)
         MainFrame.Visible = false
         InfoFrame.Visible = false
@@ -904,5 +891,5 @@ local function ShowKeySystem()
     end)
 end
 
--- Inicialização
+-- Inicializacao
 ShowKeySystem()
