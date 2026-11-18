@@ -1,5 +1,5 @@
 -- =====================================================================
--- SUS HUB | v.11.2 — LCK SCRIPT (Com Aba de Jogador e Novas Keys)
+-- SUS HUB | v.11.2 — LCK SCRIPT (Versão Limpa, sem emojis e strings corrigidas)
 -- =====================================================================
 
 local API_CONFIG = {
@@ -242,7 +242,7 @@ local function LaunchSUSHub(isPremium)
 
     local closeBtn = Instance.new("TextButton")
     closeBtn.Size, closeBtn.Position = UDim2.fromOffset(26, 26), UDim2.new(1, -32, 0.5, -13)
-    closeBtn.BackgroundColor3, closeBtn.Text = Color3.fromRGB(80, 30, 30), "✕"
+    closeBtn.BackgroundColor3, closeBtn.Text = Color3.fromRGB(80, 30, 30), "X"
     closeBtn.TextColor3, closeBtn.Font, closeBtn.TextSize = Color3.fromRGB(255, 120, 120), Enum.Font.GothamBold, 12
     closeBtn.Parent = titleBar
     Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 6)
@@ -301,10 +301,10 @@ local function LaunchSUSHub(isPremium)
         return btn
     end
 
-    local MainTabBtn = makeTabButton("⭐ Main", 0, 70)
-    local InfoTabBtn = makeTabButton("📜 Info", 75, 70)
-    local TexturaTabBtn = makeTabButton("🧱 Texturas", 150, 80)
-    local PlayerTabBtn = makeTabButton("👤 Jogador", 235, 80)
+    local MainTabBtn = makeTabButton("Main", 0, 70)
+    local InfoTabBtn = makeTabButton("Info", 75, 70)
+    local TexturaTabBtn = makeTabButton("Texturas", 150, 80)
+    local PlayerTabBtn = makeTabButton("Jogador", 235, 80)
 
     local ContentArea = Instance.new("Frame", main)
     ContentArea.Size = UDim2.new(1, -20, 1, -92)
@@ -396,7 +396,7 @@ local function LaunchSUSHub(isPremium)
     local InfoHeader = Instance.new("TextLabel", InfoPanel)
     InfoHeader.Size, InfoHeader.Position = UDim2.new(1, -16, 0, 22), UDim2.fromOffset(12, 12)
     InfoHeader.BackgroundTransparency = 1
-    InfoHeader.Text, InfoHeader.TextColor3 = "📜 CENTRAL DE INFORMAÇÕES", COLORS.accent
+    InfoHeader.Text, InfoHeader.TextColor3 = "CENTRAL DE INFORMACOES", COLORS.accent
     InfoHeader.Font, InfoHeader.TextSize = Enum.Font.GothamBold, 11
     InfoHeader.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -410,7 +410,7 @@ local function LaunchSUSHub(isPremium)
         local tLbl = Instance.new("TextLabel", btn)
         tLbl.Size, tLbl.Position = UDim2.new(1, -12, 0, 20), UDim2.fromOffset(10, 4)
         tLbl.BackgroundTransparency = 1
-        tLbl.Text, tLbl.TextColor3 = "🚀 " .. title, COLORS.accent
+        tLbl.Text, tLbl.TextColor3 = ">> " .. title, COLORS.accent
         tLbl.Font, tLbl.TextSize = Enum.Font.GothamBold, 11
         tLbl.TextXAlignment = Enum.TextXAlignment.Left
         local dLbl = Instance.new("TextLabel", btn)
@@ -447,7 +447,7 @@ local function LaunchSUSHub(isPremium)
     local TexHeader = Instance.new("TextLabel", TexturaPanel)
     TexHeader.Size, TexHeader.Position = UDim2.new(1, -16, 0, 22), UDim2.fromOffset(12, 8)
     TexHeader.BackgroundTransparency = 1
-    TexHeader.Text, TexHeader.TextColor3 = "🧱 GERENCIADOR DE TEXTURAS", COLORS.accent
+    TexHeader.Text, TexHeader.TextColor3 = "GERENCIADOR DE TEXTURAS", COLORS.accent
     TexHeader.Font, TexHeader.TextSize = Enum.Font.GothamBold, 11
     TexHeader.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -467,21 +467,21 @@ local function LaunchSUSHub(isPremium)
         btn.MouseButton1Click:Connect(callback)
     end
 
-    makeTexButton("🎨 Textura Minecraft no Mapa (FREE)", 35, Color3.fromRGB(0, 255, 100), function()
+    makeTexButton("Textura Minecraft no Mapa (FREE)", 35, Color3.fromRGB(0, 255, 100), function()
         Notify("Textura", "Aplicando texturas...", 2) runMinecraftTexturing()
     end)
-    makeTexButton((isPremium and "🔓 " or "🔒 [PREMIUM] ") .. "Texturas Reais no Mapa", 78, isPremium and COLORS.accent or Color3.fromRGB(255, 100, 100), function()
+    makeTexButton((isPremium and "Liberado: " or "Bloqueado: ") .. "Texturas Reais no Mapa", 78, isPremium and COLORS.accent or Color3.fromRGB(255, 100, 100), function()
         if isPremium then Notify("Textura", "Aplicando...", 2) runCustomTexturing() else Notify("Bloqueado", "Requer Premium!", 3) end
     end)
-    makeTexButton("📛 Colocar Textura no Nome", 121, Color3.fromRGB(0, 150, 255), function()
+    makeTexButton("Colocar Textura no Nome", 121, Color3.fromRGB(0, 150, 255), function()
         applyTextureName("rbxassetid://7547167347")
     end)
-    makeTexButton("🥞 Empilhar Texturas no Personagem", 164, Color3.fromRGB(255, 50, 150), function()
+    makeTexButton("Empilhar Texturas no Personagem", 164, Color3.fromRGB(255, 50, 150), function()
         stackTexturesOnCharacter("rbxassetid://7546651802", "rbxassetid://7547167347")
     end)
 
     -- ==========================================
-    -- ABA JOGADOR (NOVO)
+    -- ABA JOGADOR
     -- ==========================================
     local PlayerFrame = Instance.new("Frame", ContentArea)
     PlayerFrame.Size, PlayerFrame.BackgroundTransparency = UDim2.fromScale(1, 1), 1
@@ -499,7 +499,6 @@ local function LaunchSUSHub(isPremium)
     local flying = false
     local flySpeed = 50
 
-    -- Noclip Logic
     RunService.Stepped:Connect(function()
         if noclip and LocalPlayer.Character then
             for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
@@ -510,7 +509,6 @@ local function LaunchSUSHub(isPremium)
         end
     end)
 
-    -- Infinite Jump Logic
     UserInputService.JumpRequest:Connect(function()
         if infJump and LocalPlayer.Character then
             local hum = LocalPlayer.Character:FindFirstChild("Humanoid")
@@ -518,7 +516,6 @@ local function LaunchSUSHub(isPremium)
         end
     end)
 
-    -- Fly Logic (Compatível com Celular)
     local function toggleFly()
         flying = not flying
         local char = LocalPlayer.Character
@@ -557,7 +554,6 @@ local function LaunchSUSHub(isPremium)
                 local moveDir = LocalPlayer.Character.Humanoid.MoveDirection
                 local flyDir = cam.CFrame:VectorToWorldSpace(Vector3.new(moveDir.X, 0, moveDir.Z))
                 
-                -- Para subir (se estiver segurando o botão de pular)
                 if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
                     flyDir = flyDir + Vector3.new(0, 1, 0)
                 end
@@ -567,7 +563,6 @@ local function LaunchSUSHub(isPremium)
         end
     end)
 
-    -- UI do Jogador
     local function makeInputBox(title, defaultText, yPos, btnText, btnColor, callback)
         local lbl = Instance.new("TextLabel", PlayerPanel)
         lbl.Size, lbl.Position = UDim2.fromOffset(150, 20), UDim2.fromOffset(15, yPos)
@@ -608,7 +603,7 @@ local function LaunchSUSHub(isPremium)
         end
     end)
 
-    makeInputBox("Força do Pulo (Jump)", "50", 75, "Aplicar", Color3.fromRGB(0, 200, 100), function(val)
+    makeInputBox("Forca do Pulo (Jump)", "50", 75, "Aplicar", Color3.fromRGB(0, 200, 100), function(val)
         local num = tonumber(val)
         if num and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
             LocalPlayer.Character.Humanoid.JumpPower = num
@@ -625,12 +620,11 @@ local function LaunchSUSHub(isPremium)
         end
     end)
 
-    -- Toggles (Ligar/Desligar)
     local function makeToggle(title, yPos, callback)
         local btn = Instance.new("TextButton", PlayerPanel)
         btn.Size, btn.Position = UDim2.fromOffset(345, 26), UDim2.fromOffset(15, yPos)
         btn.BackgroundColor3 = Color3.fromRGB(35, 24, 18)
-        btn.Text, btn.TextColor3 = "🔴 " .. title .. " (OFF)", COLORS.text
+        btn.Text, btn.TextColor3 = "OFF: " .. title, COLORS.text
         btn.Font, btn.TextSize = Enum.Font.GothamBold, 11
         Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
         
@@ -638,10 +632,10 @@ local function LaunchSUSHub(isPremium)
         btn.MouseButton1Click:Connect(function()
             active = not active
             if active then
-                btn.Text = "🟢 " .. title .. " (ON)"
+                btn.Text = "ON: " .. title
                 btn.BackgroundColor3 = Color3.fromRGB(20, 60, 30)
             else
-                btn.Text = "🔴 " .. title .. " (OFF)"
+                btn.Text = "OFF: " .. title
                 btn.BackgroundColor3 = Color3.fromRGB(35, 24, 18)
             end
             callback(active)
@@ -652,11 +646,10 @@ local function LaunchSUSHub(isPremium)
     makeToggle("Pulo Infinito", 182, function(state) infJump = state end)
     makeToggle("Fly (Voa com o Joystick)", 214, function(state) toggleFly() end)
 
-    -- Botões de Melhorar Jogo
     local FpsBtn = Instance.new("TextButton", PlayerPanel)
     FpsBtn.Size, FpsBtn.Position = UDim2.fromOffset(200, 30), UDim2.fromOffset(15, 246)
     FpsBtn.BackgroundColor3 = Color3.fromRGB(255, 140, 0)
-    FpsBtn.Text, FpsBtn.TextColor3 = "⚡ FPS BOOST", Color3.fromRGB(20, 14, 10)
+    FpsBtn.Text, FpsBtn.TextColor3 = "FPS BOOST", Color3.fromRGB(20, 14, 10)
     FpsBtn.Font, FpsBtn.TextSize = Enum.Font.GothamBold, 11
     Instance.new("UICorner", FpsBtn).CornerRadius = UDim.new(0, 4)
     
@@ -676,7 +669,7 @@ local function LaunchSUSHub(isPremium)
     local NoFogBtn = Instance.new("TextButton", PlayerPanel)
     NoFogBtn.Size, NoFogBtn.Position = UDim2.fromOffset(155, 30), UDim2.fromOffset(225, 246)
     NoFogBtn.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
-    NoFogBtn.Text, NoFogBtn.TextColor3 = "🌫️ NO FOG", Color3.fromRGB(20, 14, 10)
+    NoFogBtn.Text, NoFogBtn.TextColor3 = "NO FOG", Color3.fromRGB(20, 14, 10)
     NoFogBtn.Font, NoFogBtn.TextSize = Enum.Font.GothamBold, 11
     Instance.new("UICorner", NoFogBtn).CornerRadius = UDim.new(0, 4)
 
@@ -688,7 +681,7 @@ local function LaunchSUSHub(isPremium)
     local GraphicBtn = Instance.new("TextButton", PlayerPanel)
     GraphicBtn.Size, GraphicBtn.Position = UDim2.fromOffset(125, 30), UDim2.fromOffset(385, 246)
     GraphicBtn.BackgroundColor3 = Color3.fromRGB(200, 100, 255)
-    GraphicBtn.Text, GraphicBtn.TextColor3 = "☀️ GRÁFICOS", Color3.fromRGB(20, 14, 10)
+    GraphicBtn.Text, GraphicBtn.TextColor3 = "GRAFICOS", Color3.fromRGB(20, 14, 10)
     GraphicBtn.Font, GraphicBtn.TextSize = Enum.Font.GothamBold, 11
     Instance.new("UICorner", GraphicBtn).CornerRadius = UDim.new(0, 4)
 
@@ -696,7 +689,7 @@ local function LaunchSUSHub(isPremium)
         Lighting.Brightness = 3
         Lighting.ClockTime = 14
         Lighting.Ambient = Color3.fromRGB(150, 150, 150)
-        Notify("Gráficos", "Iluminação melhorada!", 2)
+        Notify("Graficos", "Iluminacao melhorada!", 2)
     end)
 
     -- SISTEMA DE TROCA DE ABAS
@@ -761,14 +754,14 @@ local function ShowKeySystem()
     local Title = Instance.new("TextLabel", TopHeader)
     Title.Size, Title.Position = UDim2.new(1, -120, 1, 0), UDim2.fromOffset(15, 0)
     Title.BackgroundTransparency = 1
-    Title.Text, Title.TextColor3 = "🔒 SUS HUB — Key System", Color3.fromRGB(255, 160, 60)
+    Title.Text, Title.TextColor3 = "SUS HUB - Key System", Color3.fromRGB(255, 160, 60)
     Title.Font, Title.TextSize = Enum.Font.GothamBold, 13
     Title.TextXAlignment = Enum.TextXAlignment.Left
 
     local CloseKeyBtn = Instance.new("TextButton", TopHeader)
     CloseKeyBtn.Size, CloseKeyBtn.Position = UDim2.fromOffset(24, 24), UDim2.new(1, -28, 0.5, -12)
     CloseKeyBtn.BackgroundTransparency = 1
-    CloseKeyBtn.Text, CloseKeyBtn.TextColor3 = "✕", Color3.fromRGB(255, 100, 100)
+    CloseKeyBtn.Text, CloseKeyBtn.TextColor3 = "X", Color3.fromRGB(255, 100, 100)
     CloseKeyBtn.Font, CloseKeyBtn.TextSize = Enum.Font.GothamBold, 14
     CloseKeyBtn.MouseButton1Click:Connect(function() SG:Destroy() end)
 
@@ -807,7 +800,7 @@ local function ShowKeySystem()
     local StatusLbl = Instance.new("TextLabel", RightBox)
     StatusLbl.Size, StatusLbl.Position = UDim2.new(1, -16, 0, 32), UDim2.fromOffset(8, 20)
     StatusLbl.BackgroundColor3 = Color3.fromRGB(40, 30, 22)
-    StatusLbl.Text, StatusLbl.TextColor3 = "🔓 Aguardando Autenticação", Color3.fromRGB(255, 180, 0)
+    StatusLbl.Text, StatusLbl.TextColor3 = "Aguardando Autenticacao", Color3.fromRGB(255, 180, 0)
     StatusLbl.Font, StatusLbl.TextSize = Enum.Font.GothamBold, 10
     Instance.new("UICorner", StatusLbl).CornerRadius = UDim.new(0, 6)
     Instance.new("UIStroke", StatusLbl).Color = Color3.fromRGB(255, 140, 0)
@@ -869,7 +862,7 @@ local function ShowKeySystem()
         Instance.new("UICorner", optBtn).CornerRadius = UDim.new(0, 4)
         optBtn.MouseButton1Click:Connect(function()
             pcall(function() setclipboard(link) end)
-            StatusLbl.Text, StatusLbl.TextColor3 = "🔗 Link Copiado!", Color3.fromRGB(105, 195, 255)
+            StatusLbl.Text, StatusLbl.TextColor3 = "Link Copiado!", Color3.fromRGB(105, 195, 255)
             OptionPanel.Visible, panelOpen = false, false
         end)
     end
@@ -883,7 +876,7 @@ local function ShowKeySystem()
     end)
 
     FreeVersionBtn.MouseButton1Click:Connect(function()
-        StatusLbl.Text, StatusLbl.TextColor3 = "🟢 Free Version Ativa!", Color3.fromRGB(0, 255, 100)
+        StatusLbl.Text, StatusLbl.TextColor3 = "Free Version Ativa!", Color3.fromRGB(0, 255, 100)
         task.wait(0.4)
         SG:Destroy()
         LaunchSUSHub(false)
@@ -893,7 +886,6 @@ local function ShowKeySystem()
         local entered = KeyInput.Text:gsub("%s+", "")
         local isValid = false
         
-        -- Verifica se a key digitada está na lista de keys válidas
         for _, key in ipairs(API_CONFIG.VALID_KEYS) do
             if entered == key then
                 isValid = true
@@ -902,12 +894,12 @@ local function ShowKeySystem()
         end
 
         if isValid then
-            StatusLbl.Text, StatusLbl.TextColor3 = "🟢 Key Válida! Carregando...", Color3.fromRGB(0, 255, 100)
+            StatusLbl.Text, StatusLbl.TextColor3 = "Key Valida! Carregando...", Color3.fromRGB(0, 255, 100)
             task.wait(0.5)
             SG:Destroy()
             LaunchSUSHub(true)
         else
-            StatusLbl.Text, StatusLbl.TextColor3 = "🔴 Key Inválida!", Color3.fromRGB(255, 80, 80)
+            StatusLbl.Text, StatusLbl.TextColor3 = "Key Invalida!", Color3.fromRGB(255, 80, 80)
         end
     end)
 end
