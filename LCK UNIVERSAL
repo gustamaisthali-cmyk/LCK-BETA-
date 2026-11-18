@@ -1,0 +1,916 @@
+-- =====================================================================
+-- SUS HUB | v.11.2 — LCK SCRIPT (Com Aba de Jogador e Novas Keys)
+-- =====================================================================
+
+local API_CONFIG = {
+    DISCORD_INVITE = "https://discord.gg/STYVn6SJ5",
+    YOUTUBE_URL = "https://www.youtube.com/@LCK_SCRIPT",
+    INSTAGRAM_URL = "https://www.instagram.com/011.gustavofx?psln=N29ma3NxbGg1NXQ2",
+    KEY_LINKS = {
+        Lootlabs = "https://links.lootlabs.gg/s?wkn6J5Hn",
+        Linkvertise = "https://linkvertise.com/exemplo-link-linkvertise",
+    },
+    VALID_KEYS = {
+        "FREE-X991-AJ89-WH2L-CK72", 
+        "FREE-11G9-W8S6-2B8L-LCK-UNIVERSAL-0"
+    }
+}
+
+local Players           = game:GetService("Players")
+local UserInputService  = game:GetService("UserInputService")
+local StarterGui        = game:GetService("StarterGui")
+local RunService        = game:GetService("RunService")
+local MarketplaceService = game:GetService("MarketplaceService")
+local Lighting          = game:GetService("Lighting")
+
+local LocalPlayer = Players.LocalPlayer
+
+-- Puxar a foto real do jogador
+local PlayerAvatarUrl = "rbxassetid://7072718330"
+pcall(function()
+    PlayerAvatarUrl = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+end)
+
+local function Protect(gui)
+    pcall(function()
+        if gethui then
+            gui.Parent = gethui()
+        elseif game:GetService("CoreGui"):FindFirstChild("RobloxGui") then
+            gui.Parent = game:GetService("CoreGui")
+        else
+            gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+        end
+    end)
+end
+
+local function Notify(title, desc, duration)
+    pcall(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = title or "SUS HUB",
+            Text = desc or "",
+            Duration = duration or 4,
+        })
+    end)
+end
+
+local function GetHWID()
+    local hwid = "MOBILE-USER-" .. tostring(LocalPlayer.UserId)
+    pcall(function() if gethwid then hwid = gethwid() end end)
+    return tostring(hwid)
+end
+
+-- =====================================================================
+-- SISTEMAS DE TEXTURAS E NOME
+-- =====================================================================
+local faces = {"Front", "Back", "Bottom", "Top", "Right", "Left"}
+local function applyTextureToPart(part, textureId)
+    pcall(function()
+        for _, face in ipairs(faces) do
+            local tex = Instance.new("Texture")
+            tex.Texture = textureId
+            tex.Face = Enum.NormalId[face]
+            tex.Color3 = part.Color
+            tex.Transparency = part.Transparency
+            tex.Parent = part
+        end
+    end)
+end
+
+local minecraftMaterials = {
+    {"Wood", "rbxassetid://3258599312"}, {"WoodPlanks", "rbxassetid://8676581022"},
+    {"Brick", "rbxassetid://8558400252"}, {"Cobblestone", "rbxassetid://5003953441"},
+    {"Concrete", "rbxassetid://7341687607"}, {"DiamondPlate", "rbxassetid://6849247561"},
+    {"Fabric", "rbxassetid://118776397"}, {"Granite", "rbxassetid://4722586771"},
+    {"Grass", "rbxassetid://4722588177"}, {"Ice", "rbxassetid://3823766459"},
+    {"Marble", "rbxassetid://62967586"}, {"Metal", "rbxassetid://62967586"},
+    {"Sand", "rbxassetid://152572215"}
+}
+
+local function runMinecraftTexturing()
+    pcall(function()
+        for _, part in ipairs(workspace:GetDescendants()) do
+            if part:IsA("BasePart") then
+                for _, mat in ipairs(minecraftMaterials) do
+                    if part.Material.Name == mat[1] then
+                        applyTextureToPart(part, mat[2])
+                        part.Material = Enum.Material.SmoothPlastic
+                        break
+                    end
+                end
+            end
+        end
+    end)
+end
+
+local materialTextures = {
+    {"Grass", "rbxassetid://7547167347"}, {"Stone", "rbxassetid://7546651802"},
+    {"Concrete", "rbxassetid://7546653328"}, {"Wood", "rbxassetid://7547190453"},
+    {"Sand", "rbxassetid://7547294684"}, {"Ice", "rbxassetid://7546644642"},
+    {"Marble", "rbxassetid://7547174345"}, {"Metal", "rbxassetid://7547178395"},
+    {"Brick", "rbxassetid://7546648254"}, {"Granite", "rbxassetid://7547164400"}
+}
+
+local function runCustomTexturing()
+    pcall(function()
+        for _, part in ipairs(workspace:GetDescendants()) do
+            if part:IsA("BasePart") then
+                for _, mat in ipairs(materialTextures) do
+                    applyTextureToPart(part, mat[2])
+                    break
+                end
+            end
+        end
+    end)
+end
+
+local function applyTextureName(textureId)
+    pcall(function()
+        local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local head = char:WaitForChild("Head")
+        local oldGui = head:FindFirstChild("CustomNameGui")
+        if oldGui then oldGui:Destroy() end
+
+        local billboard = Instance.new("BillboardGui")
+        billboard.Name = "CustomNameGui"
+        billboard.Size = UDim2.new(0, 250, 0, 60)
+        billboard.StudsOffset = Vector3.new(0, 2.5, 0)
+        billboard.AlwaysOnTop = true
+        billboard.Parent = head
+
+        local img = Instance.new("ImageLabel")
+        img.Size = UDim2.fromScale(1, 1)
+        img.BackgroundTransparency = 1
+        img.Image = textureId
+        img.ZIndex = 1
+        img.Parent = billboard
+
+        local txt = Instance.new("TextLabel")
+        txt.Size = UDim2.fromScale(1, 1)
+        txt.BackgroundTransparency = 1
+        txt.Text = LocalPlayer.Name
+        txt.TextColor3 = Color3.new(1, 1, 1)
+        txt.TextStrokeTransparency = 0
+        txt.TextScaled = true
+        txt.Font = Enum.Font.GothamBold
+        txt.ZIndex = 2
+        txt.Parent = billboard
+    end)
+    Notify("Nome Texturizado", "Textura aplicada no seu nome!", 2)
+end
+
+local function stackTexturesOnCharacter(id1, id2)
+    pcall(function()
+        local char = LocalPlayer.Character
+        if not char then return end
+        local torso = char:FindFirstChild("UpperTorso") or char:FindFirstChild("Torso")
+        if not torso then return end
+
+        local oldGui = torso:FindFirstChild("StackedTexGui")
+        if oldGui then oldGui:Destroy() end
+
+        local sg = Instance.new("SurfaceGui")
+        sg.Name = "StackedTexGui"
+        sg.Face = Enum.NormalId.Front
+        sg.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+        sg.PixelsPerStud = 50
+        sg.Parent = torso
+
+        local img1 = Instance.new("ImageLabel")
+        img1.Size = UDim2.fromScale(1, 1)
+        img1.BackgroundTransparency = 1
+        img1.Image = id1
+        img1.ZIndex = 1
+        img1.Parent = sg
+
+        local img2 = Instance.new("ImageLabel")
+        img2.Size = UDim2.fromScale(1, 1)
+        img2.BackgroundTransparency = 1
+        img2.Image = id2
+        img2.ZIndex = 2
+        img2.Parent = sg
+    end)
+    Notify("Texturas Empilhadas", "Efeito aplicado no personagem!", 2)
+end
+
+-- =====================================================================
+-- LANÇAMENTO DO HUB PRINCIPAL
+-- =====================================================================
+local function LaunchSUSHub(isPremium)
+    local COLORS = {
+        bg     = Color3.fromRGB(18, 12, 10),
+        panel  = Color3.fromRGB(26, 18, 14),
+        accent = Color3.fromRGB(255, 140, 0),
+        text   = Color3.fromRGB(240, 230, 220),
+        dim    = Color3.fromRGB(150, 130, 120),
+    }
+
+    local gui = Instance.new("ScreenGui")
+    gui.Name, gui.ResetOnSpawn, gui.IgnoreGuiInset = "SUSHub_v11", false, true
+    Protect(gui)
+
+    local main = Instance.new("Frame")
+    main.Size = UDim2.fromOffset(540, 390)
+    main.Position = UDim2.new(0.5, -270, 0.5, -195)
+    main.BackgroundColor3 = COLORS.bg
+    main.BorderSizePixel = 0
+    main.Parent = gui
+    Instance.new("UICorner", main).CornerRadius = UDim.new(0, 10)
+    local mainStroke = Instance.new("UIStroke", main)
+    mainStroke.Color, mainStroke.Thickness, mainStroke.Transparency = COLORS.accent, 1, 0.3
+
+    local titleBar = Instance.new("Frame")
+    titleBar.Size, titleBar.BackgroundColor3 = UDim2.new(1, 0, 0, 42), COLORS.panel
+    titleBar.BorderSizePixel = 0
+    titleBar.Parent = main
+    Instance.new("UICorner", titleBar).CornerRadius = UDim.new(0, 10)
+
+    local gameName = "Roblox Game"
+    pcall(function()
+        local info = MarketplaceService:GetProductInfo(game.PlaceId)
+        if info and info.Name then gameName = info.Name end
+    end)
+
+    local statusTitleText = isPremium and " • [PREMIUM]" or " • [FREE]"
+    local titleLbl = Instance.new("TextLabel")
+    titleLbl.Size = UDim2.new(1, -220, 1, 0)
+    titleLbl.Position = UDim2.fromOffset(12, 0)
+    titleLbl.BackgroundTransparency = 1
+    titleLbl.Text = "SUS HUB Project NEXT\n" .. gameName .. statusTitleText
+    titleLbl.TextXAlignment, titleLbl.TextColor3 = Enum.TextXAlignment.Left, isPremium and Color3.fromRGB(0, 255, 100) or Color3.fromRGB(255, 160, 60)
+    titleLbl.Font, titleLbl.TextSize = Enum.Font.GothamBold, 11
+    titleLbl.Parent = titleBar
+
+    local closeBtn = Instance.new("TextButton")
+    closeBtn.Size, closeBtn.Position = UDim2.fromOffset(26, 26), UDim2.new(1, -32, 0.5, -13)
+    closeBtn.BackgroundColor3, closeBtn.Text = Color3.fromRGB(80, 30, 30), "✕"
+    closeBtn.TextColor3, closeBtn.Font, closeBtn.TextSize = Color3.fromRGB(255, 120, 120), Enum.Font.GothamBold, 12
+    closeBtn.Parent = titleBar
+    Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 6)
+
+    local openBtn = Instance.new("TextButton")
+    openBtn.Size = UDim2.fromOffset(110, 34)
+    openBtn.Position = UDim2.new(0, 15, 0.5, -17)
+    openBtn.BackgroundColor3 = COLORS.panel
+    openBtn.Text = "SUS HUB"
+    openBtn.TextColor3 = COLORS.accent
+    openBtn.Font, openBtn.TextSize = Enum.Font.GothamBold, 12
+    openBtn.Visible = false
+    openBtn.Parent = gui
+    Instance.new("UICorner", openBtn).CornerRadius = UDim.new(0, 8)
+    Instance.new("UIStroke", openBtn).Color = COLORS.accent
+
+    closeBtn.MouseButton1Click:Connect(function() main.Visible = false openBtn.Visible = true end)
+    openBtn.MouseButton1Click:Connect(function() main.Visible = true openBtn.Visible = false end)
+
+    -- Arrastar
+    do
+        local dragging, dragStart, startPos
+        titleBar.InputBegan:Connect(function(i)
+            if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+                dragging, dragStart, startPos = true, i.Position, main.Position
+            end
+        end)
+        UserInputService.InputEnded:Connect(function(i)
+            if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then dragging = false end
+        end)
+        UserInputService.InputChanged:Connect(function(i)
+            if not dragging then return end
+            if i.UserInputType ~= Enum.UserInputType.MouseMovement and i.UserInputType ~= Enum.UserInputType.Touch then return end
+            local d = i.Position - dragStart
+            main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + d.X, startPos.Y.Scale, startPos.Y.Offset + d.Y)
+        end)
+    end
+
+    -- ABAS
+    local TabBar = Instance.new("Frame", main)
+    TabBar.Size = UDim2.new(1, -20, 0, 32)
+    TabBar.Position = UDim2.fromOffset(10, 48)
+    TabBar.BackgroundTransparency = 1
+
+    local function makeTabButton(text, xPos, width)
+        local btn = Instance.new("TextButton", TabBar)
+        btn.Size = UDim2.fromOffset(width, 26)
+        btn.Position = UDim2.fromOffset(xPos, 0)
+        btn.BackgroundColor3 = Color3.fromRGB(35, 24, 18)
+        btn.Text = text
+        btn.TextColor3 = COLORS.text
+        btn.Font = Enum.Font.GothamBold
+        btn.TextSize = 11
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+        Instance.new("UIStroke", btn).Color = Color3.fromRGB(80, 50, 35)
+        return btn
+    end
+
+    local MainTabBtn = makeTabButton("⭐ Main", 0, 70)
+    local InfoTabBtn = makeTabButton("📜 Info", 75, 70)
+    local TexturaTabBtn = makeTabButton("🧱 Texturas", 150, 80)
+    local PlayerTabBtn = makeTabButton("👤 Jogador", 235, 80)
+
+    local ContentArea = Instance.new("Frame", main)
+    ContentArea.Size = UDim2.new(1, -20, 1, -92)
+    ContentArea.Position = UDim2.fromOffset(10, 82)
+    ContentArea.BackgroundTransparency = 1
+
+    -- ==========================================
+    -- ABA MAIN
+    -- ==========================================
+    local MainFrame = Instance.new("Frame", ContentArea)
+    MainFrame.Size = UDim2.fromScale(1, 1)
+    MainFrame.BackgroundTransparency = 1
+    MainFrame.Visible = true
+
+    local LeftPanel = Instance.new("Frame", MainFrame)
+    LeftPanel.Size = UDim2.fromOffset(250, 288)
+    LeftPanel.BackgroundColor3 = COLORS.panel
+    Instance.new("UICorner", LeftPanel).CornerRadius = UDim.new(0, 8)
+    Instance.new("UIStroke", LeftPanel).Color = COLORS.accent
+
+    local UserInfoTitle = Instance.new("TextLabel", LeftPanel)
+    UserInfoTitle.Size, UserInfoTitle.Position = UDim2.new(1, -16, 0, 18), UDim2.fromOffset(10, 8)
+    UserInfoTitle.BackgroundTransparency = 1
+    UserInfoTitle.Text, UserInfoTitle.TextColor3 = "USER INFO", COLORS.accent
+    UserInfoTitle.Font, UserInfoTitle.TextSize = Enum.Font.GothamBold, 10
+    UserInfoTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+    local CustomAvatarImg = Instance.new("ImageLabel", LeftPanel)
+    CustomAvatarImg.Size, CustomAvatarImg.Position = UDim2.fromOffset(40, 40), UDim2.fromOffset(10, 30)
+    CustomAvatarImg.BackgroundColor3 = COLORS.bg
+    CustomAvatarImg.Image = PlayerAvatarUrl
+    Instance.new("UICorner", CustomAvatarImg).CornerRadius = UDim.new(1, 0)
+    Instance.new("UIStroke", CustomAvatarImg).Color = COLORS.accent
+
+    local UserDetails = Instance.new("TextLabel", LeftPanel)
+    UserDetails.Size, UserDetails.Position = UDim2.new(1, -60, 0, 40), UDim2.fromOffset(58, 32)
+    UserDetails.BackgroundTransparency = 1
+    UserDetails.Text = LocalPlayer.Name .. "\n@" .. LocalPlayer.Name .. "\nHWID: " .. GetHWID():sub(1, 10) .. "..."
+    UserDetails.TextColor3 = COLORS.text
+    UserDetails.Font, UserDetails.TextSize = Enum.Font.GothamBold, 10
+    UserDetails.TextXAlignment = Enum.TextXAlignment.Left
+
+    local RightPanel = Instance.new("Frame", MainFrame)
+    RightPanel.Size = UDim2.fromOffset(260, 288)
+    RightPanel.Position = UDim2.fromOffset(260, 0)
+    RightPanel.BackgroundColor3 = COLORS.panel
+    Instance.new("UICorner", RightPanel).CornerRadius = UDim.new(0, 8)
+    Instance.new("UIStroke", RightPanel).Color = COLORS.accent
+
+    local function makeShortcutRow(title, desc, yPos, callback)
+        local btn = Instance.new("TextButton", RightPanel)
+        btn.Size, btn.Position = UDim2.fromOffset(240, 44), UDim2.fromOffset(10, yPos)
+        btn.BackgroundColor3 = Color3.fromRGB(20, 14, 10)
+        btn.Text = ""
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+        Instance.new("UIStroke", btn).Color = Color3.fromRGB(60, 40, 30)
+        local tLbl = Instance.new("TextLabel", btn)
+        tLbl.Size, tLbl.Position = UDim2.new(1, -12, 0, 20), UDim2.fromOffset(8, 4)
+        tLbl.BackgroundTransparency = 1
+        tLbl.Text, tLbl.TextColor3 = "★ " .. title, COLORS.text
+        tLbl.Font, tLbl.TextSize = Enum.Font.GothamBold, 11
+        tLbl.TextXAlignment = Enum.TextXAlignment.Left
+        local dLbl = Instance.new("TextLabel", btn)
+        dLbl.Size, dLbl.Position = UDim2.new(1, -12, 0, 16), UDim2.fromOffset(8, 22)
+        dLbl.BackgroundTransparency = 1
+        dLbl.Text, dLbl.TextColor3 = desc, COLORS.dim
+        dLbl.Font, dLbl.TextSize = Enum.Font.Gotham, 9
+        dLbl.TextXAlignment = Enum.TextXAlignment.Left
+        btn.MouseButton1Click:Connect(callback)
+    end
+
+    makeShortcutRow("Discord", "Copiar link do Discord", 34, function() pcall(function() setclipboard(API_CONFIG.DISCORD_INVITE) end) Notify("Copiado", "Discord copiado!") end)
+    makeShortcutRow("YouTube", "Copiar canal @LCK_SCRIPT", 86, function() pcall(function() setclipboard(API_CONFIG.YOUTUBE_URL) end) Notify("Copiado", "YouTube copiado!") end)
+    makeShortcutRow("Instagram", "Copiar Instagram oficial", 138, function() pcall(function() setclipboard(API_CONFIG.INSTAGRAM_URL) end) Notify("Copiado", "Instagram copiado!") end)
+
+    -- ==========================================
+    -- ABA INFO
+    -- ==========================================
+    local InfoFrame = Instance.new("Frame", ContentArea)
+    InfoFrame.Size, InfoFrame.BackgroundTransparency = UDim2.fromScale(1, 1), 1
+    InfoFrame.Visible = false
+
+    local InfoPanel = Instance.new("Frame", InfoFrame)
+    InfoPanel.Size = UDim2.fromOffset(520, 288)
+    InfoPanel.BackgroundColor3 = COLORS.panel
+    Instance.new("UICorner", InfoPanel).CornerRadius = UDim.new(0, 8)
+    Instance.new("UIStroke", InfoPanel).Color = COLORS.accent
+
+    local InfoHeader = Instance.new("TextLabel", InfoPanel)
+    InfoHeader.Size, InfoHeader.Position = UDim2.new(1, -16, 0, 22), UDim2.fromOffset(12, 12)
+    InfoHeader.BackgroundTransparency = 1
+    InfoHeader.Text, InfoHeader.TextColor3 = "📜 CENTRAL DE INFORMAÇÕES", COLORS.accent
+    InfoHeader.Font, InfoHeader.TextSize = Enum.Font.GothamBold, 11
+    InfoHeader.TextXAlignment = Enum.TextXAlignment.Left
+
+    local function makeExtraButton(title, desc, yPos, callback)
+        local btn = Instance.new("TextButton", InfoPanel)
+        btn.Size, btn.Position = UDim2.fromOffset(496, 42), UDim2.fromOffset(12, yPos)
+        btn.BackgroundColor3 = Color3.fromRGB(20, 14, 10)
+        btn.Text = ""
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+        Instance.new("UIStroke", btn).Color = Color3.fromRGB(80, 50, 35)
+        local tLbl = Instance.new("TextLabel", btn)
+        tLbl.Size, tLbl.Position = UDim2.new(1, -12, 0, 20), UDim2.fromOffset(10, 4)
+        tLbl.BackgroundTransparency = 1
+        tLbl.Text, tLbl.TextColor3 = "🚀 " .. title, COLORS.accent
+        tLbl.Font, tLbl.TextSize = Enum.Font.GothamBold, 11
+        tLbl.TextXAlignment = Enum.TextXAlignment.Left
+        local dLbl = Instance.new("TextLabel", btn)
+        dLbl.Size, dLbl.Position = UDim2.new(1, -12, 0, 16), UDim2.fromOffset(10, 22)
+        dLbl.BackgroundTransparency = 1
+        dLbl.Text, dLbl.TextColor3 = desc, COLORS.dim
+        dLbl.Font, dLbl.TextSize = Enum.Font.Gotham, 9
+        dLbl.TextXAlignment = Enum.TextXAlignment.Left
+        btn.MouseButton1Click:Connect(callback)
+    end
+
+    makeExtraButton("LCK HUB PIGGY 1.60", "Executar script para Piggy", 45, function()
+        Notify("Carregando...", "Executando LCK HUB PIGGY", 2)
+        pcall(function() loadstring(game:HttpGet("https://pastefy.app/ck27ob4i/raw"))() end)
+    end)
+    makeExtraButton("redzlib v5 UI Library", "Carregar interface redzlib", 95, function()
+        Notify("Carregando...", "Executando redzlib v5", 2)
+        pcall(function() loadstring(game:HttpGet("https://pastefy.app/SglyCstp/raw"))() end)
+    end)
+
+    -- ==========================================
+    -- ABA TEXTURAS
+    -- ==========================================
+    local TexturaFrame = Instance.new("Frame", ContentArea)
+    TexturaFrame.Size, TexturaFrame.BackgroundTransparency = UDim2.fromScale(1, 1), 1
+    TexturaFrame.Visible = false
+
+    local TexturaPanel = Instance.new("Frame", TexturaFrame)
+    TexturaPanel.Size = UDim2.fromOffset(520, 288)
+    TexturaPanel.BackgroundColor3 = COLORS.panel
+    Instance.new("UICorner", TexturaPanel).CornerRadius = UDim.new(0, 8)
+    Instance.new("UIStroke", TexturaPanel).Color = COLORS.accent
+
+    local TexHeader = Instance.new("TextLabel", TexturaPanel)
+    TexHeader.Size, TexHeader.Position = UDim2.new(1, -16, 0, 22), UDim2.fromOffset(12, 8)
+    TexHeader.BackgroundTransparency = 1
+    TexHeader.Text, TexHeader.TextColor3 = "🧱 GERENCIADOR DE TEXTURAS", COLORS.accent
+    TexHeader.Font, TexHeader.TextSize = Enum.Font.GothamBold, 11
+    TexHeader.TextXAlignment = Enum.TextXAlignment.Left
+
+    local function makeTexButton(title, yPos, color, callback)
+        local btn = Instance.new("TextButton", TexturaPanel)
+        btn.Size, btn.Position = UDim2.fromOffset(496, 36), UDim2.fromOffset(12, yPos)
+        btn.BackgroundColor3 = Color3.fromRGB(20, 14, 10)
+        btn.Text = ""
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+        Instance.new("UIStroke", btn).Color = color
+        local lbl = Instance.new("TextLabel", btn)
+        lbl.Size, lbl.Position = UDim2.new(1, -12, 0, 36), UDim2.fromOffset(10, 0)
+        lbl.BackgroundTransparency = 1
+        lbl.Text, lbl.TextColor3 = title, color
+        lbl.Font, lbl.TextSize = Enum.Font.GothamBold, 11
+        lbl.TextXAlignment = Enum.TextXAlignment.Left
+        btn.MouseButton1Click:Connect(callback)
+    end
+
+    makeTexButton("🎨 Textura Minecraft no Mapa (FREE)", 35, Color3.fromRGB(0, 255, 100), function()
+        Notify("Textura", "Aplicando texturas...", 2) runMinecraftTexturing()
+    end)
+    makeTexButton((isPremium and "🔓 " or "🔒 [PREMIUM] ") .. "Texturas Reais no Mapa", 78, isPremium and COLORS.accent or Color3.fromRGB(255, 100, 100), function()
+        if isPremium then Notify("Textura", "Aplicando...", 2) runCustomTexturing() else Notify("Bloqueado", "Requer Premium!", 3) end
+    end)
+    makeTexButton("📛 Colocar Textura no Nome", 121, Color3.fromRGB(0, 150, 255), function()
+        applyTextureName("rbxassetid://7547167347")
+    end)
+    makeTexButton("🥞 Empilhar Texturas no Personagem", 164, Color3.fromRGB(255, 50, 150), function()
+        stackTexturesOnCharacter("rbxassetid://7546651802", "rbxassetid://7547167347")
+    end)
+
+    -- ==========================================
+    -- ABA JOGADOR (NOVO)
+    -- ==========================================
+    local PlayerFrame = Instance.new("Frame", ContentArea)
+    PlayerFrame.Size, PlayerFrame.BackgroundTransparency = UDim2.fromScale(1, 1), 1
+    PlayerFrame.Visible = false
+
+    local PlayerPanel = Instance.new("Frame", PlayerFrame)
+    PlayerPanel.Size = UDim2.fromOffset(520, 288)
+    PlayerPanel.BackgroundColor3 = COLORS.panel
+    Instance.new("UICorner", PlayerPanel).CornerRadius = UDim.new(0, 8)
+    Instance.new("UIStroke", PlayerPanel).Color = COLORS.accent
+
+    -- Funções do Jogador
+    local noclip = false
+    local infJump = false
+    local flying = false
+    local flySpeed = 50
+
+    -- Noclip Logic
+    RunService.Stepped:Connect(function()
+        if noclip and LocalPlayer.Character then
+            for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
+                if v:IsA("BasePart") and v.CanCollide then
+                    v.CanCollide = false
+                end
+            end
+        end
+    end)
+
+    -- Infinite Jump Logic
+    UserInputService.JumpRequest:Connect(function()
+        if infJump and LocalPlayer.Character then
+            local hum = LocalPlayer.Character:FindFirstChild("Humanoid")
+            if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+        end
+    end)
+
+    -- Fly Logic (Compatível com Celular)
+    local function toggleFly()
+        flying = not flying
+        local char = LocalPlayer.Character
+        if not char then return end
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        local hum = char:FindFirstChild("Humanoid")
+        
+        if flying then
+            local bg = Instance.new("BodyGyro", hrp)
+            bg.Name = "FlyGyro"
+            bg.P = 9e4
+            bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+            bg.cframe = hrp.CFrame
+            
+            local bv = Instance.new("BodyVelocity", hrp)
+            bv.Name = "FlyVel"
+            bv.velocity = Vector3.new(0,0,0)
+            bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+            
+            hum.PlatformStand = true
+        else
+            local bg = hrp:FindFirstChild("FlyGyro")
+            local bv = hrp:FindFirstChild("FlyVel")
+            if bg then bg:Destroy() end
+            if bv then bv:Destroy() end
+            hum.PlatformStand = false
+        end
+    end
+
+    RunService.RenderStepped:Connect(function()
+        if flying and LocalPlayer.Character then
+            local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            local bv = hrp and hrp:FindFirstChild("FlyVel")
+            if bv then
+                local cam = workspace.CurrentCamera
+                local moveDir = LocalPlayer.Character.Humanoid.MoveDirection
+                local flyDir = cam.CFrame:VectorToWorldSpace(Vector3.new(moveDir.X, 0, moveDir.Z))
+                
+                -- Para subir (se estiver segurando o botão de pular)
+                if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+                    flyDir = flyDir + Vector3.new(0, 1, 0)
+                end
+                
+                bv.Velocity = flyDir * flySpeed
+            end
+        end
+    end)
+
+    -- UI do Jogador
+    local function makeInputBox(title, defaultText, yPos, btnText, btnColor, callback)
+        local lbl = Instance.new("TextLabel", PlayerPanel)
+        lbl.Size, lbl.Position = UDim2.fromOffset(150, 20), UDim2.fromOffset(15, yPos)
+        lbl.BackgroundTransparency = 1
+        lbl.Text, lbl.TextColor3 = title, COLORS.text
+        lbl.Font, lbl.TextSize = Enum.Font.GothamBold, 11
+        lbl.TextXAlignment = Enum.TextXAlignment.Left
+
+        local bg = Instance.new("Frame", PlayerPanel)
+        bg.Size, bg.Position = UDim2.fromOffset(100, 24), UDim2.fromOffset(170, yPos)
+        bg.BackgroundColor3 = Color3.fromRGB(15, 10, 8)
+        Instance.new("UICorner", bg).CornerRadius = UDim.new(0, 4)
+        Instance.new("UIStroke", bg).Color = Color3.fromRGB(80, 50, 35)
+
+        local box = Instance.new("TextBox", bg)
+        box.Size, box.Position = UDim2.new(1, -10, 1, 0), UDim2.fromOffset(5, 0)
+        box.BackgroundTransparency = 1
+        box.Text, box.TextColor3 = defaultText, COLORS.text
+        box.Font, box.TextSize = Enum.Font.Gotham, 11
+
+        local btn = Instance.new("TextButton", PlayerPanel)
+        btn.Size, btn.Position = UDim2.fromOffset(80, 24), UDim2.fromOffset(280, yPos)
+        btn.BackgroundColor3 = btnColor
+        btn.Text, btn.TextColor3 = btnText, Color3.fromRGB(20, 14, 10)
+        btn.Font, btn.TextSize = Enum.Font.GothamBold, 10
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+
+        btn.MouseButton1Click:Connect(function()
+            callback(box.Text)
+        end)
+    end
+
+    makeInputBox("Velocidade (Speed)", "16", 40, "Aplicar", Color3.fromRGB(0, 200, 100), function(val)
+        local num = tonumber(val)
+        if num and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            LocalPlayer.Character.Humanoid.WalkSpeed = num
+            Notify("Speed", "Velocidade alterada para " .. num, 2)
+        end
+    end)
+
+    makeInputBox("Força do Pulo (Jump)", "50", 75, "Aplicar", Color3.fromRGB(0, 200, 100), function(val)
+        local num = tonumber(val)
+        if num and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            LocalPlayer.Character.Humanoid.JumpPower = num
+            LocalPlayer.Character.Humanoid.UseJumpPower = true
+            Notify("Jump", "Pulo alterado para " .. num, 2)
+        end
+    end)
+
+    makeInputBox("Velocidade do Fly", "50", 110, "Aplicar", Color3.fromRGB(0, 200, 100), function(val)
+        local num = tonumber(val)
+        if num then
+            flySpeed = num
+            Notify("Fly", "Velocidade do Fly: " .. num, 2)
+        end
+    end)
+
+    -- Toggles (Ligar/Desligar)
+    local function makeToggle(title, yPos, callback)
+        local btn = Instance.new("TextButton", PlayerPanel)
+        btn.Size, btn.Position = UDim2.fromOffset(345, 26), UDim2.fromOffset(15, yPos)
+        btn.BackgroundColor3 = Color3.fromRGB(35, 24, 18)
+        btn.Text, btn.TextColor3 = "🔴 " .. title .. " (OFF)", COLORS.text
+        btn.Font, btn.TextSize = Enum.Font.GothamBold, 11
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+        
+        local active = false
+        btn.MouseButton1Click:Connect(function()
+            active = not active
+            if active then
+                btn.Text = "🟢 " .. title .. " (ON)"
+                btn.BackgroundColor3 = Color3.fromRGB(20, 60, 30)
+            else
+                btn.Text = "🔴 " .. title .. " (OFF)"
+                btn.BackgroundColor3 = Color3.fromRGB(35, 24, 18)
+            end
+            callback(active)
+        end)
+    end
+
+    makeToggle("Noclip (Atravessar Paredes)", 150, function(state) noclip = state end)
+    makeToggle("Pulo Infinito", 182, function(state) infJump = state end)
+    makeToggle("Fly (Voa com o Joystick)", 214, function(state) toggleFly() end)
+
+    -- Botões de Melhorar Jogo
+    local FpsBtn = Instance.new("TextButton", PlayerPanel)
+    FpsBtn.Size, FpsBtn.Position = UDim2.fromOffset(200, 30), UDim2.fromOffset(15, 246)
+    FpsBtn.BackgroundColor3 = Color3.fromRGB(255, 140, 0)
+    FpsBtn.Text, FpsBtn.TextColor3 = "⚡ FPS BOOST", Color3.fromRGB(20, 14, 10)
+    FpsBtn.Font, FpsBtn.TextSize = Enum.Font.GothamBold, 11
+    Instance.new("UICorner", FpsBtn).CornerRadius = UDim.new(0, 4)
+    
+    FpsBtn.MouseButton1Click:Connect(function()
+        Notify("FPS Boost", "Limpando o mapa...", 2)
+        pcall(function()
+            for _, v in pairs(workspace:GetDescendants()) do
+                if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") or v:IsA("Sparkles") then
+                    v:Destroy()
+                end
+            end
+            Lighting.GlobalShadows = false
+            Lighting.FogEnd = 9e9
+        end)
+    end)
+
+    local NoFogBtn = Instance.new("TextButton", PlayerPanel)
+    NoFogBtn.Size, NoFogBtn.Position = UDim2.fromOffset(155, 30), UDim2.fromOffset(225, 246)
+    NoFogBtn.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
+    NoFogBtn.Text, NoFogBtn.TextColor3 = "🌫️ NO FOG", Color3.fromRGB(20, 14, 10)
+    NoFogBtn.Font, NoFogBtn.TextSize = Enum.Font.GothamBold, 11
+    Instance.new("UICorner", NoFogBtn).CornerRadius = UDim.new(0, 4)
+
+    NoFogBtn.MouseButton1Click:Connect(function()
+        Lighting.FogEnd = 9e9
+        Notify("No Fog", "Neblina removida!", 2)
+    end)
+
+    local GraphicBtn = Instance.new("TextButton", PlayerPanel)
+    GraphicBtn.Size, GraphicBtn.Position = UDim2.fromOffset(125, 30), UDim2.fromOffset(385, 246)
+    GraphicBtn.BackgroundColor3 = Color3.fromRGB(200, 100, 255)
+    GraphicBtn.Text, GraphicBtn.TextColor3 = "☀️ GRÁFICOS", Color3.fromRGB(20, 14, 10)
+    GraphicBtn.Font, GraphicBtn.TextSize = Enum.Font.GothamBold, 11
+    Instance.new("UICorner", GraphicBtn).CornerRadius = UDim.new(0, 4)
+
+    GraphicBtn.MouseButton1Click:Connect(function()
+        Lighting.Brightness = 3
+        Lighting.ClockTime = 14
+        Lighting.Ambient = Color3.fromRGB(150, 150, 150)
+        Notify("Gráficos", "Iluminação melhorada!", 2)
+    end)
+
+    -- SISTEMA DE TROCA DE ABAS
+    local function setActiveTab(activeBtn, targetFrame)
+        MainFrame.Visible = false
+        InfoFrame.Visible = false
+        TexturaFrame.Visible = false
+        PlayerFrame.Visible = false
+        
+        MainTabBtn.BackgroundColor3 = Color3.fromRGB(35, 24, 18)
+        InfoTabBtn.BackgroundColor3 = Color3.fromRGB(35, 24, 18)
+        TexturaTabBtn.BackgroundColor3 = Color3.fromRGB(35, 24, 18)
+        PlayerTabBtn.BackgroundColor3 = Color3.fromRGB(35, 24, 18)
+        
+        MainTabBtn.TextColor3 = COLORS.text
+        InfoTabBtn.TextColor3 = COLORS.text
+        TexturaTabBtn.TextColor3 = COLORS.text
+        PlayerTabBtn.TextColor3 = COLORS.text
+
+        targetFrame.Visible = true
+        activeBtn.BackgroundColor3 = COLORS.accent
+        activeBtn.TextColor3 = Color3.fromRGB(20, 12, 8)
+    end
+
+    MainTabBtn.MouseButton1Click:Connect(function() setActiveTab(MainTabBtn, MainFrame) end)
+    InfoTabBtn.MouseButton1Click:Connect(function() setActiveTab(InfoTabBtn, InfoFrame) end)
+    TexturaTabBtn.MouseButton1Click:Connect(function() setActiveTab(TexturaTabBtn, TexturaFrame) end)
+    PlayerTabBtn.MouseButton1Click:Connect(function() setActiveTab(PlayerTabBtn, PlayerFrame) end)
+
+    setActiveTab(MainTabBtn, MainFrame)
+    Notify("SUS HUB v.11.2", "Painel carregado com sucesso!", 3)
+end
+
+-- =====================================================================
+-- TELA DE KEY
+-- =====================================================================
+local function ShowKeySystem()
+    local SG = Instance.new("ScreenGui")
+    SG.Name = "SUS_KeySystem"
+    SG.ZIndexBehavior = Enum.ZIndexBehavior.Global
+    SG.ResetOnSpawn = false
+    SG.IgnoreGuiInset = true
+    Protect(SG)
+
+    local Backdrop = Instance.new("Frame", SG)
+    Backdrop.Size = UDim2.fromScale(1, 1)
+    Backdrop.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Backdrop.BackgroundTransparency = 0.5
+
+    local Card = Instance.new("Frame", Backdrop)
+    Card.Size = UDim2.fromOffset(500, 330)
+    Card.AnchorPoint = Vector2.new(0.5, 0.5)
+    Card.Position = UDim2.fromScale(0.5, 0.5)
+    Card.BackgroundColor3 = Color3.fromRGB(20, 14, 10)
+    Instance.new("UICorner", Card).CornerRadius = UDim.new(0, 12)
+    Instance.new("UIStroke", Card).Color = Color3.fromRGB(255, 140, 0)
+
+    local TopHeader = Instance.new("Frame", Card)
+    TopHeader.Size = UDim2.new(1, 0, 0, 40)
+    TopHeader.BackgroundTransparency = 1
+
+    local Title = Instance.new("TextLabel", TopHeader)
+    Title.Size, Title.Position = UDim2.new(1, -120, 1, 0), UDim2.fromOffset(15, 0)
+    Title.BackgroundTransparency = 1
+    Title.Text, Title.TextColor3 = "🔒 SUS HUB — Key System", Color3.fromRGB(255, 160, 60)
+    Title.Font, Title.TextSize = Enum.Font.GothamBold, 13
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+
+    local CloseKeyBtn = Instance.new("TextButton", TopHeader)
+    CloseKeyBtn.Size, CloseKeyBtn.Position = UDim2.fromOffset(24, 24), UDim2.new(1, -28, 0.5, -12)
+    CloseKeyBtn.BackgroundTransparency = 1
+    CloseKeyBtn.Text, CloseKeyBtn.TextColor3 = "✕", Color3.fromRGB(255, 100, 100)
+    CloseKeyBtn.Font, CloseKeyBtn.TextSize = Enum.Font.GothamBold, 14
+    CloseKeyBtn.MouseButton1Click:Connect(function() SG:Destroy() end)
+
+    local LeftBox = Instance.new("Frame", Card)
+    LeftBox.Size, LeftBox.Position = UDim2.fromOffset(210, 260), UDim2.fromOffset(15, 50)
+    LeftBox.BackgroundColor3 = Color3.fromRGB(30, 22, 16)
+    Instance.new("UICorner", LeftBox).CornerRadius = UDim.new(0, 8)
+    Instance.new("UIStroke", LeftBox).Color = Color3.fromRGB(255, 140, 0)
+
+    local InfoLabel = Instance.new("TextLabel", LeftBox)
+    InfoLabel.Size, InfoLabel.Position = UDim2.new(1, -16, 0, 55), UDim2.fromOffset(8, 8)
+    InfoLabel.BackgroundTransparency = 1
+    InfoLabel.Text = "Information\nCreator: LCK SCRIPT\nVersion: v.11.2"
+    InfoLabel.TextColor3, InfoLabel.Font, InfoLabel.TextSize = Color3.fromRGB(240, 220, 200), Enum.Font.Gotham, 11
+    InfoLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    local AvatarImg = Instance.new("ImageLabel", LeftBox)
+    AvatarImg.Size, AvatarImg.Position = UDim2.fromOffset(60, 60), UDim2.new(0.5, -30, 0, 90)
+    AvatarImg.BackgroundColor3 = Color3.fromRGB(45, 32, 25)
+    AvatarImg.Image = PlayerAvatarUrl
+    Instance.new("UICorner", AvatarImg).CornerRadius = UDim.new(1, 0)
+
+    local PlayerNameTag = Instance.new("TextLabel", LeftBox)
+    PlayerNameTag.Size, PlayerNameTag.Position = UDim2.new(1, -10, 0, 35), UDim2.fromOffset(5, 160)
+    PlayerNameTag.BackgroundTransparency = 1
+    PlayerNameTag.Text = LocalPlayer.Name .. "\n@" .. LocalPlayer.Name
+    PlayerNameTag.TextColor3, PlayerNameTag.Font, PlayerNameTag.TextSize = Color3.fromRGB(240, 230, 220), Enum.Font.GothamBold, 11
+    PlayerNameTag.TextXAlignment = Enum.TextXAlignment.Center
+
+    local RightBox = Instance.new("Frame", Card)
+    RightBox.Size, RightBox.Position = UDim2.fromOffset(245, 260), UDim2.fromOffset(238, 50)
+    RightBox.BackgroundColor3 = Color3.fromRGB(30, 22, 16)
+    Instance.new("UICorner", RightBox).CornerRadius = UDim.new(0, 8)
+    Instance.new("UIStroke", RightBox).Color = Color3.fromRGB(255, 140, 0)
+
+    local StatusLbl = Instance.new("TextLabel", RightBox)
+    StatusLbl.Size, StatusLbl.Position = UDim2.new(1, -16, 0, 32), UDim2.fromOffset(8, 20)
+    StatusLbl.BackgroundColor3 = Color3.fromRGB(40, 30, 22)
+    StatusLbl.Text, StatusLbl.TextColor3 = "🔓 Aguardando Autenticação", Color3.fromRGB(255, 180, 0)
+    StatusLbl.Font, StatusLbl.TextSize = Enum.Font.GothamBold, 10
+    Instance.new("UICorner", StatusLbl).CornerRadius = UDim.new(0, 6)
+    Instance.new("UIStroke", StatusLbl).Color = Color3.fromRGB(255, 140, 0)
+
+    local KeyInputBg = Instance.new("Frame", RightBox)
+    KeyInputBg.Size, KeyInputBg.Position = UDim2.new(1, -16, 0, 35), UDim2.fromOffset(8, 65)
+    KeyInputBg.BackgroundColor3 = Color3.fromRGB(15, 10, 8)
+    Instance.new("UICorner", KeyInputBg).CornerRadius = UDim.new(0, 6)
+    Instance.new("UIStroke", KeyInputBg).Color = Color3.fromRGB(255, 140, 0)
+
+    local KeyInput = Instance.new("TextBox", KeyInputBg)
+    KeyInput.Size, KeyInput.Position = UDim2.new(1, -10, 1, 0), UDim2.fromOffset(5, 0)
+    KeyInput.BackgroundTransparency = 1
+    KeyInput.PlaceholderText, KeyInput.Text = "Digite sua Key aqui...", ""
+    KeyInput.TextColor3, KeyInput.PlaceholderColor3 = Color3.fromRGB(255, 255, 255), Color3.fromRGB(140, 110, 90)
+    KeyInput.Font, KeyInput.TextSize = Enum.Font.GothamMedium, 11
+    KeyInput.ClearTextOnFocus = false
+
+    local BtnY, BtnH, BtnW, Gap = 140, 34, 75, 4
+
+    local FreeVersionBtn = Instance.new("TextButton", RightBox)
+    FreeVersionBtn.Size, FreeVersionBtn.Position = UDim2.fromOffset(BtnW, BtnH), UDim2.fromOffset(8, BtnY)
+    FreeVersionBtn.BackgroundColor3 = Color3.fromRGB(55, 40, 30)
+    FreeVersionBtn.Text, FreeVersionBtn.TextColor3 = "Free Version", Color3.fromRGB(240, 220, 200)
+    FreeVersionBtn.Font, FreeVersionBtn.TextSize = Enum.Font.GothamBold, 10
+    Instance.new("UICorner", FreeVersionBtn).CornerRadius = UDim.new(0, 6)
+
+    local GetKeyBtn = Instance.new("TextButton", RightBox)
+    GetKeyBtn.Size, GetKeyBtn.Position = UDim2.fromOffset(BtnW, BtnH), UDim2.fromOffset(8 + BtnW + Gap, BtnY)
+    GetKeyBtn.BackgroundColor3 = Color3.fromRGB(255, 140, 0)
+    GetKeyBtn.Text, GetKeyBtn.TextColor3 = "Get Key", Color3.fromRGB(20, 14, 10)
+    GetKeyBtn.Font, GetKeyBtn.TextSize = Enum.Font.GothamBold, 10
+    Instance.new("UICorner", GetKeyBtn).CornerRadius = UDim.new(0, 6)
+
+    local EnterKeyBtn = Instance.new("TextButton", RightBox)
+    EnterKeyBtn.Size, EnterKeyBtn.Position = UDim2.fromOffset(BtnW, BtnH), UDim2.fromOffset(8 + (BtnW + Gap) * 2, BtnY)
+    EnterKeyBtn.BackgroundColor3 = Color3.fromRGB(180, 90, 0)
+    EnterKeyBtn.Text, EnterKeyBtn.TextColor3 = "Enter Key", Color3.fromRGB(255, 255, 255)
+    EnterKeyBtn.Font, EnterKeyBtn.TextSize = Enum.Font.GothamBold, 10
+    Instance.new("UICorner", EnterKeyBtn).CornerRadius = UDim.new(0, 6)
+
+    local panelOpen = false
+    local OptionPanel = Instance.new("Frame", RightBox)
+    OptionPanel.Size = UDim2.fromOffset(BtnW + 20, 58)
+    OptionPanel.Position = UDim2.fromOffset(8 + BtnW + Gap - 10, BtnY - 62)
+    OptionPanel.BackgroundColor3 = Color3.fromRGB(40, 30, 22)
+    OptionPanel.Visible = false
+    OptionPanel.ZIndex = 25
+    Instance.new("UICorner", OptionPanel).CornerRadius = UDim.new(0, 6)
+    Instance.new("UIStroke", OptionPanel).Color = Color3.fromRGB(255, 140, 0)
+
+    local function makeLinkOption(text, yPos, link)
+        local optBtn = Instance.new("TextButton", OptionPanel)
+        optBtn.Size, optBtn.Position = UDim2.new(1, -6, 0, 24), UDim2.fromOffset(3, yPos)
+        optBtn.BackgroundColor3 = Color3.fromRGB(60, 42, 30)
+        optBtn.Text, optBtn.TextColor3 = text, Color3.fromRGB(255, 200, 150)
+        optBtn.Font, optBtn.TextSize = Enum.Font.GothamBold, 9
+        optBtn.ZIndex = 26
+        Instance.new("UICorner", optBtn).CornerRadius = UDim.new(0, 4)
+        optBtn.MouseButton1Click:Connect(function()
+            pcall(function() setclipboard(link) end)
+            StatusLbl.Text, StatusLbl.TextColor3 = "🔗 Link Copiado!", Color3.fromRGB(105, 195, 255)
+            OptionPanel.Visible, panelOpen = false, false
+        end)
+    end
+
+    makeLinkOption("Option 1 (Lootlabs)", 3, API_CONFIG.KEY_LINKS.Lootlabs)
+    makeLinkOption("Option 2 (Linkvertise)", 30, API_CONFIG.KEY_LINKS.Linkvertise)
+
+    GetKeyBtn.MouseButton1Click:Connect(function()
+        panelOpen = not panelOpen
+        OptionPanel.Visible = panelOpen
+    end)
+
+    FreeVersionBtn.MouseButton1Click:Connect(function()
+        StatusLbl.Text, StatusLbl.TextColor3 = "🟢 Free Version Ativa!", Color3.fromRGB(0, 255, 100)
+        task.wait(0.4)
+        SG:Destroy()
+        LaunchSUSHub(false)
+    end)
+
+    EnterKeyBtn.MouseButton1Click:Connect(function()
+        local entered = KeyInput.Text:gsub("%s+", "")
+        local isValid = false
+        
+        -- Verifica se a key digitada está na lista de keys válidas
+        for _, key in ipairs(API_CONFIG.VALID_KEYS) do
+            if entered == key then
+                isValid = true
+                break
+            end
+        end
+
+        if isValid then
+            StatusLbl.Text, StatusLbl.TextColor3 = "🟢 Key Válida! Carregando...", Color3.fromRGB(0, 255, 100)
+            task.wait(0.5)
+            SG:Destroy()
+            LaunchSUSHub(true)
+        else
+            StatusLbl.Text, StatusLbl.TextColor3 = "🔴 Key Inválida!", Color3.fromRGB(255, 80, 80)
+        end
+    end)
+end
+
+-- Inicialização
+ShowKeySystem()
